@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="TrackingCamera.BaseCameraClasses.BaseCamera" Collapsed="true">
+    <Position X="3" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACEAAgAAAAACCgAAAAEIAAAACFIIACAQACAAACCAg=</HashCode>
+      <FileName>BaseCameraClasses\BaseCamera.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TrackingCamera.BaseCameraClasses.BaseOnvifPtzCamera" Collapsed="true">
+    <Position X="3" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CBECABMBA4QAABbBAAAAkIIAYBAAACCIUABEgDAACCg=</HashCode>
+      <FileName>BaseCameraClasses\BaseOnvifPtzCamera.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TrackingCamera.CameraClasses.Vstarcam_C7823WIP" Collapsed="true">
+    <Position X="3" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CameraClasses\vstarcam_C7823WIP.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TrackingCamera.CameraClasses.Vstarcam_C7823WIPCameraBuilder" Collapsed="true">
+    <Position X="4.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAQAAAAAAAAAA=</HashCode>
+      <FileName>CameraClasses\vstarcam_C7823WIP.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TrackingCamera.CameraClasses.Vstarcam_C7823WIPManagerBuilder" Collapsed="true">
+    <Position X="6.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAQAAAAAAAAAA=</HashCode>
+      <FileName>CameraClasses\vstarcam_C7823WIP.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TrackingCamera.CameraClasses.CameraBuilder" Collapsed="true">
+    <Position X="4.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CameraClasses\CameraBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TrackingCamera.CameraClasses.StaticCameraFactory" Collapsed="true">
+    <Position X="4.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>CameraClasses\StaticCameraFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TrackingCamera.CameraManagers.CameraManagerBuilder" Collapsed="true">
+    <Position X="6.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CameraManagers\CameraManagerBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TrackingCamera.CameraManagers.StaticCameraManagerFactory" Collapsed="true">
+    <Position X="6.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>CameraManagers\StaticCameraManagerFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="TrackingCamera.BaseCameraInterfaces.IOnvifCamera" Collapsed="true">
+    <Position X="1.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACABAAAgQAAABBAAAAAIAAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>BaseCameraInterfaces\IOnvifCamera.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="TrackingCamera.BaseCameraInterfaces.IPtzCamera" Collapsed="true">
+    <Position X="1.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CBEAAAIBAYAAABYAAAAAkIIAYBAAACCIUABEgDAAACA=</HashCode>
+      <FileName>BaseCameraInterfaces\IPtzCamera.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

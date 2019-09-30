@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TrackingCamera_VStarCam": {
+      "commandName": "Project",
+      "commandLineArgs": "192.168.8.18:10080 admin Gateway2"
+    }
+  }
+}
