@@ -22,7 +22,7 @@ namespace TrackingCamera {
 		/// <summary>
 		/// Main asycronous method 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>An Asyncronous <c>Task</c></returns>
 		private static async Task MainAsync()
 		{
 			string cameraConfigFile = ConfigurationManager.AppSettings["CameraSettingsPath"];
@@ -40,16 +40,18 @@ namespace TrackingCamera {
 					int camerasToOpen = (from cameraConfig in cameraConfigs where cameraConfig.IsActive select cameraConfig).Count();
 					Globals.Log.Info(string.Format("Starting {0} cameras.", camerasToOpen));
 
-					// start up the camera managers
+					// start up a camera manager for each camera in the camera config file.
 					foreach (CameraConfig cameraConfig in cameraConfigs)
 					{
 						if (cameraConfig.IsActive)
 						{
+							// the camera is enabled, start up a Manager for it.
 							BaseCameraManager cameraManager = factory.CreateCameraManager(cameraConfig);
 							runningManagers.Add(cameraManager);
 						}
 						else
 						{
+							// the camera is disabled.
 							Globals.Log.Info(string.Format("Skipping camera '{0}' since it's marked inactive.", cameraConfig.CameraName));
 						}
 					}

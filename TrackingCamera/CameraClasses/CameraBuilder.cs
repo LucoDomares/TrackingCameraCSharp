@@ -23,12 +23,12 @@ namespace TrackingCamera.CameraClasses
 		{
 			throw new NotImplementedException("Not yet implemented.");
 		}
-		
+
 		/// <summary>
 		/// Instantiates the actual camera class
 		/// </summary>
 		/// <param name="cameraConfig">config settings for the camera</param>
-		/// <returns></returns>
+		/// <returns>An instantiated <c>BaseCamera</c></returns>
 		public virtual BaseCamera Build(CameraConfig cameraConfig)
 		{
 			throw new NotImplementedException("Not yet implemented.");

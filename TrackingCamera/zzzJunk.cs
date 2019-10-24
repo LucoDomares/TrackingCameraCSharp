@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TrackingCamera
 {
-	class zzzJunk
+	class ZzzJunk
 	{
 		//static void Main(string[] args)
 		//{

@@ -125,8 +125,18 @@ namespace TrackingCamera.BaseCameraClasses
 		#endregion
 
 		#region  Protected Abstract Methods
+
+		/// <summary>
+		/// Implementation of the Open Video method.
+		/// Must be overriden in the descending camera class.
+		/// </summary>
 		public abstract void OpenVideoImpl();
 
+		/// <summary>
+		/// Implementation of the Get Frame method.
+		/// Must be overriden in the descending camera class.
+		/// </summary>
+		/// <returns></returns>
 		public abstract object GetFrameImpl();
 
 		#endregion

@@ -21,11 +21,11 @@ namespace TrackingCamera.CameraClasses
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="cameraIpAddress"></param>
-		/// <param name="username"></param>
-		/// <param name="password"></param>
-		/// <param name="cameraName"></param>
-		/// <param name="onvifPort"></param>
+		/// <param name="cameraIpAddress">The IP address of the camera.</param>
+		/// <param name="username">The username to login with.</param>
+		/// <param name="password">The password to login with.</param>
+		/// <param name="cameraName">The User-friendly name of the camera.</param>
+		/// <param name="onvifPort">The ONVIF port number for controlling Ptz functions.</param>
 		public Vstarcam_C7823WIP(
 			string cameraIpAddress,
 			string username,
@@ -37,8 +37,11 @@ namespace TrackingCamera.CameraClasses
 			
 		}
 
-		// overrides
+		#region Overrides
 
+		/// <summary>
+		/// The implmentation of the Open Video method for this camera.
+		/// </summary>
 		public override void OpenVideoImpl()
 		{
 			if (this.VideoStreamer != null)
@@ -60,18 +63,36 @@ namespace TrackingCamera.CameraClasses
 
 			Task.Delay(500);
 		}
+
+		#endregion
 	}
 
+	#region Camera Builder
+
+	/// <summary>
+	/// The camera Manager factory class.
+	/// There are 2 kinds of factory: 
+	///    1. Camera Manager Factory - creates a Manager on it's own thread to manage a running camera.
+	///    2. Camera Factory - creates a running camera which is then managed by it's Manager.
+	/// </summary>
 	public class Vstarcam_C7823WIPCameraBuilder : CameraBuilder
 	{
-
+		// the instantiated camera.
 		public Vstarcam_C7823WIP Instance;
 
+		/// <summary>
+		/// constructor
+		/// </summary>
 		public Vstarcam_C7823WIPCameraBuilder()
 		{
 			this.Instance = null;
 		}
 
+		/// <summary>
+		/// Instantiates a camera ready to be managed by its camera manager.
+		/// </summary>
+		/// <param name="cameraConfig">The configuration of the camera to be instantiated.</param>
+		/// <returns>A running <c>Vstarcam_C7823WIP</c> camera</returns>
 		public override BaseCamera Build(CameraConfig cameraConfig)
 		{
 			if (this.Instance == null)
@@ -82,16 +103,31 @@ namespace TrackingCamera.CameraClasses
 		}
 	}
 
+	#endregion
 
+	#region Manager Builder
+
+	/// <summary>
+	/// The camera manager factory class.
+	/// </summary>
 	public class Vstarcam_C7823WIPManagerBuilder : CameraManagerBuilder
 	{
+		// the managing thread.
 		public Thread Instance;
 
+		/// <summary>
+		/// constructor
+		/// </summary>
 		public Vstarcam_C7823WIPManagerBuilder()
 		{
 			this.Instance = null;
 		}
 
+		/// <summary>
+		/// Instantiates a Manager ready to manage a camera.
+		/// </summary>
+		/// <param name="cameraConfig">The configuration of the camera to be managed.</param>
+		/// <returns>A <c>BaseCameraManager</c></returns>
 		public override BaseCameraManager Build(Helpers.CameraConfig cameraConfig)
 		{
 			// todo: this whole method can be generic and move to base class
@@ -103,4 +139,6 @@ namespace TrackingCamera.CameraClasses
 			return manager;
 		}
 	}
+
+	#endregion
 }

@@ -421,7 +421,10 @@ namespace TrackingCamera.BaseCameraClasses
 			}
 		}
 
-		// private overrides
+		/// <summary>
+		/// Gets the next video frame from the camera.
+		/// </summary>
+		/// <returns></returns>
 		public override object GetFrameImpl()
 		{
 			try
@@ -461,18 +464,31 @@ namespace TrackingCamera.BaseCameraClasses
 
 		}
 
+		#region Move Continuous Commands
 
-		public virtual void SetZoomContinuous(int tiltAmt)
+
+		/// <summary>
+		/// Sets the Zoom value before Execute Zoom command is called.
+		/// </summary>
+		/// <param name="zoomAmt"></param>
+		public virtual void SetZoomContinuous(int zoomAmt)
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
 
+		/// <summary>
+		/// Executes the Zoom command.
+		/// Call SetZoomContinuous first before calling this method.
+		/// </summary>
 		public virtual void ExecuteZoomContinuous()
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
 
-		// private overrides
+		/// <summary>
+		/// Sets the Tilt value before Execute PanTilt command is called.
+		/// </summary>
+		/// <param name="tiltAmt"></param>
 		public virtual void SetTiltContinuous(int tiltAmt)
 		{
 			if (tiltAmt != 0 && Math.Abs(tiltAmt) > this.PtzTrackingThreshold)
@@ -490,6 +506,10 @@ namespace TrackingCamera.BaseCameraClasses
 			this.PtzTiltAmt = tiltAmt;
 		}
 
+		/// <summary>
+		/// Sets the Pan value before Execute PanTilt command is called.
+		/// </summary>
+		/// <param name="tiltAmt"></param>
 		public virtual void SetPanContinuous(int panAmt)
 		{
 			if (panAmt != 0 && Math.Abs(panAmt) > this.PtzTrackingThreshold)
@@ -507,6 +527,11 @@ namespace TrackingCamera.BaseCameraClasses
 			this.PtzPanAmt = panAmt;	
 		}
 
+		/// <summary>
+		/// Executes the Pan and Tilt command.
+		/// Call SetTiltContinuous first before calling this method.
+		/// Call SetPanContinuous first before calling this method.
+		/// </summary>
 		public virtual void ExecutePanTiltContinuous()
 		{
 			this.PtzController.ContinuousMoveAsync(this.MediaProfile.Name, new PTZSpeed
@@ -538,38 +563,69 @@ namespace TrackingCamera.BaseCameraClasses
 
 		}
 
+		#endregion
+
+		#region Move Relative Commands
+
+		/// <summary>
+		/// Sets the relative Tilt Amount.
+		/// </summary>
+		/// <param name="tiltAmt"></param>
 		public virtual void SetTiltRelative(int tiltAmt)
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
 
+		/// <summary>
+		/// Sets the relative Pan Amount.
+		/// </summary>
+		/// <param name="panAmt"></param>
 		public virtual void SetPanRelative(int panAmt)
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
 	
+		/// <summary>
+		/// Executes the Relative PanTilt command.
+		/// </summary>
 		public virtual void ExecutePanTiltRelative()
 		{
 			this.StopPtz();
 			throw new NotImplementedException("Not Implemented.");
 		}
 
+		/// <summary>
+		/// Sets the relative Zoom Amount.
+		/// </summary>
+		/// <param name="zoomAmt"></param>
 		public virtual void SetZoomRelative(int zoomAmt)
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
 
+		/// <summary>
+		/// Executes the relative Zoom Command.
+		/// </summary>
 		public virtual void ExecuteZoomRelative()
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
 
+		#endregion
+
+		/// <summary>
+		/// Stops all Pan/tilt/zoom commands.
+		/// </summary>
 		public virtual void StopPtz()
 		{
 			// Stop continuous move
 			this.PtzController.StopAsync(this.MediaProfile.Name, true, true);
 		}
 
+		/// <summary>
+		/// Is the current target (face) approximately centered in the video frame?
+		/// </summary>
+		/// <returns><c>True</c> if the target is centered, <c>False</c> otherwise.</returns>
 		public bool IsTargetCentered()
 		{
 			if ((this.PtzPanAmt == 0) & (this.PtzTiltAmt == 0))
@@ -589,6 +645,10 @@ namespace TrackingCamera.BaseCameraClasses
 
 		#region  Protected Abstract Methods
 
+		/// <summary>
+		/// Implementation of the Open Video method.
+		/// Must be overriden in the descending camera class.
+		/// </summary>
 		public abstract override void OpenVideoImpl();
 
 		#endregion
