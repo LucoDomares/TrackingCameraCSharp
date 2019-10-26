@@ -16,7 +16,7 @@ namespace TrackingCamera.CameraClasses
 	public class Vstarcam_C7823WIP : BaseOnvifPtzCamera, IOnvifCamera
 	{
 		// the Video Stream
-		new public object VideoStreamer;
+		//new public CvCapture VideoStreamer;
 
 		/// <summary>
 		/// Constructor
@@ -60,6 +60,8 @@ namespace TrackingCamera.CameraClasses
 			}
 
 			this.VideoStreamer = new CvCapture(addressFull);
+			//this.VideoStreamer.GStreamerQueueLength = 1;
+			//this.VideoStreamer = OpenCvSharp.VideoCapture()
 
 			Task.Delay(500);
 		}
@@ -132,10 +134,11 @@ namespace TrackingCamera.CameraClasses
 		{
 			// todo: this whole method can be generic and move to base class
 			BaseCamera camera = StaticCameraFactory.Factory.CreateCamera(cameraConfig);
+			camera.OpenVideo();
+
 			OnvifCameraManager manager = new OnvifCameraManager((BaseOnvifPtzCamera)camera, cameraConfig);
 			manager.RunAsync();	
 
-			// todo: temporarily return null
 			return manager;
 		}
 	}

@@ -425,30 +425,23 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Gets the next video frame from the camera.
 		/// </summary>
 		/// <returns></returns>
-		public override object GetFrameImpl()
+		public override IplImage GetFrameImpl()
 		{
 			try
 			{
 				if (this.VideoStreamer != null)
 				{
-					/*
-                    @"frame_counter = self._videostream.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
-				if frame_counter == self._videostream.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT):
-					#frame_counter = 0  # Or whatever as long as it is the same as next line
-					self._videostream.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, 0)
-				";*/
-					// grab the frame from the video stream
-					// todo:
-					var frame = this.VideoStreamer;//.QueryFrame(); //.read();
+					IplImage frame = this.VideoStreamer.QueryFrame(); 
+					 
 					if (frame == null)
 					{
 						throw new ArgumentNullException("Empty frame was returned by videostream");
 					}
 					if (this.IsInvertedVideo) {
-                        // the camera is inverted, so flip the video feed.
-						// todo:
-                        //Cv.Flip(frame);
+						// the camera is inverted, so flip the video feed.
+						frame.Flip();
                     }
+
 					return frame;
 				}
 				else
@@ -460,8 +453,8 @@ namespace TrackingCamera.BaseCameraClasses
 			{
 				Globals.Log.Error(detail);
 			}
-			return null;
 
+			return null;
 		}
 
 		#region Move Continuous Commands

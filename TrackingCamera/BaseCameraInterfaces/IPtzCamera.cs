@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrackingCamera.BaseCameraClasses;
+using OpenCvSharp;
 
 namespace TrackingCamera.BaseCameraInterfaces
 {
@@ -62,7 +63,7 @@ namespace TrackingCamera.BaseCameraInterfaces
 
 		void OpenVideoImpl();
 
-		object GetFrameImpl();
+		IplImage GetFrameImpl();
 
 		void SetTiltContinuous(int tiltAmt);
 

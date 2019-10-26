@@ -1,7 +1,9 @@
 #region Using Clauses
 using System.Collections;
-using TrackingCamera.Helpers;
 using System;
+using OpenCvSharp;
+using TrackingCamera.Helpers;
+using System.Collections.Concurrent;
 #endregion
 
 namespace TrackingCamera.BaseCameraClasses
@@ -12,19 +14,33 @@ namespace TrackingCamera.BaseCameraClasses
 	public abstract class BaseCamera
 	{
 		protected bool IsAutoTrackEnabled { get; set; }
+
 		protected bool IsCalculateFrameCentre { get; set; }
+
 		protected object Camera { get; set; }
+
 		protected string CameraIpAddress { get; set; }
-		protected string CameraName { get; set; }
-		private Queue CurrentFrameQueue { get; set; }
+
+		public string CameraName { get; set; }
+
+		public FixedSizedQueue<IplImage> CurrentStreamFrameQueue { get; set; }
+
 		private bool IsFocusWindow { get; set; }
-		private bool IsContinuousRecording { get; set; }
+
+		public bool IsContinuousRecording { get; set; }
+
 		protected bool IsInvertedVideo { get; set; }
+
 		private object ProcessLock { get; set; }
+
 		protected string Password { get; set; }
-		private Queue ProcessedFrameQueue { get; set; }
+
+		private FixedSizedQueue<IplImage> ProcessedFrameQueue { get; set; }
+
 		protected string UserName { get; set; }
-		protected object VideoStreamer { get; set; }
+
+		protected CvCapture VideoStreamer { get; set; }
+
 		public virtual bool IsSupportsPTZ => false;
 		
 		/// <summary>
@@ -41,8 +57,8 @@ namespace TrackingCamera.BaseCameraClasses
 			this.Password = Password;
 			this.CameraIpAddress = CameraIpAddress;
 			this.IsContinuousRecording = false;
-			this.CurrentFrameQueue = new Queue(1);
-			this.ProcessedFrameQueue = new Queue(1);
+			this.CurrentStreamFrameQueue = new FixedSizedQueue<IplImage>(1);
+			this.ProcessedFrameQueue = new FixedSizedQueue<IplImage>(1);
 			this.IsFocusWindow = true;
 			this.IsCalculateFrameCentre = true;
 			this.IsAutoTrackEnabled = false;
@@ -105,15 +121,45 @@ namespace TrackingCamera.BaseCameraClasses
 		}
 
 		/// <summary>
+		/// Frames per second received from the camera. 
+		/// </summary>
+		/// <returns></returns>
+		public double Fps()
+		{
+			return this.VideoStreamer.Fps;
+		}
+
+		/// <summary>
 		/// Wrapper for the descendent get video frame implementation
 		/// </summary>
 		/// <returns></returns>
-		public virtual object GetFrame()
+		public virtual IplImage GetFrame()
 		{
 			try
 			{
 				// call implementor
 				return this.GetFrameImpl();
+			}
+			catch (Exception detail)
+			{
+				Globals.Log.Error(detail);
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Returns the most recent video frame from the Videostream.
+		/// </summary>
+		/// <returns>an <c>IplImage</c>.</returns>
+		public IplImage GetCurrentFrame()
+		{
+			try
+			{
+				// return the latest frame from the Queue.
+				IplImage frame;
+				
+				this.CurrentStreamFrameQueue.TryDequeue(out frame);
+				return frame;
 			}
 			catch (Exception detail)
 			{
@@ -137,7 +183,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Must be overriden in the descending camera class.
 		/// </summary>
 		/// <returns></returns>
-		public abstract object GetFrameImpl();
+		public abstract IplImage GetFrameImpl();
 
 		#endregion
 	}
