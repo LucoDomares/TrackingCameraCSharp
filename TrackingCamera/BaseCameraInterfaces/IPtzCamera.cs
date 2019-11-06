@@ -29,7 +29,6 @@ namespace TrackingCamera.BaseCameraInterfaces
 
 		int PtzZoomAmt { get; set; }
 
-
 		#region Public Methods
 		void SetTilt(int tilt_amt);
 
@@ -63,7 +62,7 @@ namespace TrackingCamera.BaseCameraInterfaces
 
 		void OpenVideoImpl();
 
-		IplImage GetFrameImpl();
+		Mat GetFrameImpl();
 
 		void SetTiltContinuous(int tiltAmt);
 

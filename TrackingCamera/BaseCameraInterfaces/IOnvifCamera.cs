@@ -9,11 +9,11 @@ using Mictlanix.DotNet.Onvif.Ptz;
 namespace TrackingCamera.BaseCameraInterfaces
 {
 	/// <summary>
-	/// Interface for a camera that supports Onvif
+	/// Interface for a camera that supports Onvif protocol
 	/// </summary>
 	interface IOnvifCamera
 	{
-		string HttpPort { get; set; }
+		int HttpPort { get; set; }
 
 		Mictlanix.DotNet.Onvif.Device.Device Camera { get; set; }
 
@@ -25,7 +25,7 @@ namespace TrackingCamera.BaseCameraInterfaces
 
 		int OnvifPort { get; set; }
 
-		string RtspPort { get; set; }
+		int RtspPort { get; set; }
 
 		string VideoStreamUri { get; set; }
 

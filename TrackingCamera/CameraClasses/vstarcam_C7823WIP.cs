@@ -15,9 +15,6 @@ namespace TrackingCamera.CameraClasses
 	/// </summary>
 	public class Vstarcam_C7823WIP : BaseOnvifPtzCamera, IOnvifCamera
 	{
-		// the Video Stream
-		//new public CvCapture VideoStreamer;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -59,10 +56,8 @@ namespace TrackingCamera.CameraClasses
 				addressFull = string.Format("{0}{1}:{2}{3}{4}{5}{6}{7}{8}", addressPrefix, this.CameraIpAddress, this.HttpPort.ToString(), addressSuffix, addressUserSuffix, this.UserName, addressPasswordSuffix, this.Password, AddressFinalSuffix);
 			}
 
-			this.VideoStreamer = new CvCapture(addressFull);
-			//this.VideoStreamer.GStreamerQueueLength = 1;
-			//this.VideoStreamer = OpenCvSharp.VideoCapture()
-
+			this.VideoStreamer = new VideoCapture(addressFull); //CvCapture(addressFull);
+			
 			Task.Delay(500);
 		}
 

@@ -15,11 +15,9 @@ namespace TrackingCamera.BaseCameraClasses
 	/// <summary>
 	/// Abstract camera class implementing the Ptz and Onvif interfaces.
 	/// </summary>
-	public abstract class BaseOnvifPtzCamera : BaseCamera, IOnvifCamera, IPtzCamera
+	public abstract class BaseOnvifPtzCamera : BasePtzCamera, IOnvifCamera, IPtzCamera
 	{
 		#region IPtzCamera members
-
-		public bool IsPtzMoveRelative { get; set; }
 
 		public int PanTiltSleepLongMilliseconds { get; set; }
 
@@ -27,25 +25,20 @@ namespace TrackingCamera.BaseCameraClasses
 
 		public int PtzMovementSmallThreshold { get; set; }
 
-		public int PtzTrackingThreshold { get; set; }
-
 		public override bool IsSupportsPTZ => true;
 
 		#endregion
 
 		#region IOnvifCamera members
 		new public Mictlanix.DotNet.Onvif.Device.Device Camera { get; set; }
-		public string HttpPort { get; set; }
+		public int HttpPort { get; set; }
 		public Mictlanix.DotNet.Onvif.Media.MediaClient MediaClient { get; set; }
 		public Profile MediaProfile { get; set; }
 		public Mictlanix.DotNet.Onvif.Ptz.PTZClient PtzController { get; set; }
 		public int OnvifPort { get; set; }
-		public string RtspPort { get; set; }
+		public int RtspPort { get; set; }
 		public string VideoStreamUri { get; set; }
-		public string HostAddress { get; set; }
-		public int PtzPanAmt { get; set; }
-		public int PtzTiltAmt { get; set; }
-		public int PtzZoomAmt { get; set; }
+		
 		#endregion
 
 		/// <summary>
@@ -66,10 +59,8 @@ namespace TrackingCamera.BaseCameraClasses
 			if (camera.MediaProfile != null)
 			{
 				StreamSetup streamSetup = new StreamSetup
-											{
-												Stream = StreamType.RTPUnicast,
-												Transport = new Transport()
-											};
+											{ Stream = StreamType.RTPUnicast, Transport = new Transport() };
+
 				streamSetup.Transport.Protocol = TransportProtocol.TCP;
 				MediaUri videoStreamUriObject = await camera.MediaClient.GetStreamUriAsync(streamSetup, camera.MediaProfile.Name);
 				camera.VideoStreamUri = videoStreamUriObject.Uri;
@@ -78,7 +69,6 @@ namespace TrackingCamera.BaseCameraClasses
 
 			Mictlanix.DotNet.Onvif.Device.GetNetworkProtocolsRequest request = new Mictlanix.DotNet.Onvif.Device.GetNetworkProtocolsRequest();
 			Mictlanix.DotNet.Onvif.Device.GetNetworkProtocolsResponse response = await camera.Camera.GetNetworkProtocolsAsync(request);
-
 	
 			// store http and rtsp ports
 			foreach (NetworkProtocol protocol in response.NetworkProtocols)
@@ -87,11 +77,11 @@ namespace TrackingCamera.BaseCameraClasses
 				switch (protocolName)
 				{
 					case "HTTP":
-						camera.HttpPort = protocol.Port[0].ToString();
+						camera.HttpPort = protocol.Port[0];
 						break;
 
 					case "RTSP":
-						camera.RtspPort = protocol.Port[0].ToString();
+						camera.RtspPort = protocol.Port[0];
 						break;
 				}
 			}
@@ -144,260 +134,12 @@ namespace TrackingCamera.BaseCameraClasses
 		#region Public Methods
 
 		/// <summary>
-		/// Sets the amount of movement required in the Up/Down direction.
-		/// </summary>
-		/// <param name="tiltAmt">the amount to tilt.</param>
-		public virtual void SetTilt(int tiltAmt)
-		{
-			if (this.IsPtzMoveRelative)
-			{
-				this.SetTiltRelative(tiltAmt);
-			}
-			else
-			{
-				this.SetTiltContinuous(tiltAmt);
-			}
-		}
-
-		/// <summary>
-		/// Sets the amount of movement required in the left/right direction.
-		/// </summary>
-		/// <param name="panAmt">the amount to pan</param>
-		public virtual void SetPan(int panAmt)
-		{
-			if (this.IsPtzMoveRelative)
-			{
-				this.SetPanRelative(panAmt);
-			}
-			else
-			{
-				this.SetPanContinuous(panAmt);
-			}
-		}
-
-		/// <summary>
-		/// Sets the amount of zoom required in/out.
-		/// </summary>
-		/// <param name="zoomAmt">the amount to zoom</param>
-		public virtual void SetZoom(int zoomAmt)
-		{
-			if (this.IsPtzMoveRelative)
-			{
-				this.SetZoomRelative(zoomAmt);
-			}
-			else
-			{
-				this.SetZoomContinuous(zoomAmt);
-			}
-		}
-
-		/// <summary>
-		/// Executes the Pan & Tilt functions of the PTZ controller 
-		/// according the Pan and Tilt values previously set.
-		/// </summary>
-		public virtual void ExecutePanTilt()
-		{
-			try
-			{
-				if (this.IsPtzMoveRelative)
-				{
-					this.ExecutePanTiltRelative();
-				}
-				else
-				{
-					this.ExecutePanTiltContinuous();
-				}
-			}
-			catch (Exception ex)
-			{
-				Globals.Log.Error(ex);
-			}
-		}
-
-		/// <summary>
-		/// Executes the zoom of the PTZ controller 
-		/// according the zoom value previously set.
-		/// </summary>
-		public virtual void ExecuteZoom()
-		{
-			try
-			{
-				if (this.IsPtzMoveRelative)
-				{
-					this.ExecuteZoomRelative();
-				}
-				else
-				{
-					this.ExecuteZoomContinuous();
-				}
-			}
-			catch (Exception ex)
-			{
-				Globals.Log.Error(ex);
-			}
-		}
-
-		/// <summary>
-		/// Tells the Ptz controller to tilt upwards
-		/// </summary>
-		/// <param name="locker">the lock object</param>
-		public virtual void MoveUp(object locker)
-		{
-			var TiltAmt = 100;
-			if (this.IsInvertedVideo)
-			{
-				TiltAmt = TiltAmt * -1;
-			}
-			lock (locker)
-			{
-				try
-				{
-					this.SetPan(0);
-					this.SetTilt(TiltAmt);
-					this.ExecutePanTilt();
-				}
-				catch (Exception ex)
-				{
-					Globals.Log.Error(ex);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Tells the Ptz controller to tilt downwards
-		/// </summary>
-		/// <param name="locker">the lock object</param>
-		public virtual void MoveDown(object locker)
-		{
-			var TiltAmt = -100;
-			if (this.IsInvertedVideo)
-			{
-				TiltAmt = TiltAmt * -1;
-			}
-			lock (locker)
-			{
-				try
-				{
-					this.SetPan(0);
-					this.SetTilt(TiltAmt);
-					this.ExecutePanTilt();
-				}
-				catch (Exception ex)
-				{
-					Globals.Log.Error(ex);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Tells the Ptz controller to pan Left
-		/// </summary>
-		/// <param name="locker">the lock object</param>
-		public virtual void MoveLeft(object locker)
-		{
-			var PanAmt = 100;
-			if (this.IsInvertedVideo)
-			{
-				PanAmt = PanAmt * -1;
-			}
-			lock (locker)
-			{
-				try
-				{
-					this.SetPan(PanAmt);
-					this.SetTilt(0);
-					this.ExecutePanTilt();
-				}
-				catch (Exception ex)
-				{
-					Globals.Log.Error(ex);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Tells the Ptz controller to pan right
-		/// </summary>
-		/// <param name="locker">the lock object</param>
-		public virtual void MoveRight(object locker)
-		{
-			var PanAmt = -100;
-			if (this.IsInvertedVideo)
-			{
-				PanAmt = PanAmt * -1;
-			}
-			lock (locker)
-			{
-				try
-				{
-					this.SetPan(PanAmt);
-					this.SetTilt(0);
-					this.ExecutePanTilt();
-				}
-				catch (Exception ex)
-				{
-					Globals.Log.Error(ex);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Tells the Ptz Controller to zoom in
-		/// </summary>
-		/// <param name="locker">the lock object</param>
-		public virtual void ZoomOut(object locker)
-		{
-			var ZoomAmt = -100;
-			if (this.IsInvertedVideo)
-			{
-				ZoomAmt = ZoomAmt * -1;
-			}
-			lock (locker)
-			{
-				try
-				{
-					this.SetZoom(ZoomAmt);
-					this.ExecuteZoom();
-				}
-				catch (Exception ex)
-				{
-					Globals.Log.Error(ex);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Tells the Ptz controller to zoom out
-		/// </summary>
-		/// <param name="locker">the lock object</param>
-		public virtual void ZoomIn(object locker)
-		{
-			var ZoomAmt = 100;
-			if (this.IsInvertedVideo)
-			{
-				ZoomAmt = ZoomAmt * -1;
-			}
-			lock (locker)
-			{
-				try
-				{
-					this.SetZoom(ZoomAmt);
-					this.ExecuteZoom();
-				}
-				catch (Exception ex)
-				{
-					Globals.Log.Error(ex);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Is it very far to move the camera in order to center it on the target?
 		/// </summary>
 		/// <param name="panAmt">The Pan amount that has been set.</param>
 		/// <param name="tiltAmt">The tile amount that has been set.</param>
 		/// <returns><c>true</c> if the pan or tilt amount is over the small movement threshold.</returns>
-		public virtual bool IsFarToMove(int panAmt, int tiltAmt)
+		public override bool IsFarToMove(int panAmt, int tiltAmt)
 		{
 			return (Math.Abs(panAmt) > this.PtzMovementSmallThreshold) | (Math.Abs(tiltAmt) > this.PtzMovementSmallThreshold);
 		}
@@ -425,22 +167,23 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Gets the next video frame from the camera.
 		/// </summary>
 		/// <returns></returns>
-		public override IplImage GetFrameImpl()
+		public override Mat GetFrameImpl()
 		{
 			try
 			{
 				if (this.VideoStreamer != null)
 				{
-					IplImage frame = this.VideoStreamer.QueryFrame(); 
-					 
+					Mat frame = new Mat();
+					this.VideoStreamer.Read(frame);
+
 					if (frame == null)
 					{
 						throw new ArgumentNullException("Empty frame was returned by videostream");
 					}
 					if (this.IsInvertedVideo) {
 						// the camera is inverted, so flip the video feed.
-						frame.Flip();
-                    }
+						frame.Flip(FlipMode.Y);
+					}
 
 					return frame;
 				}
@@ -459,12 +202,11 @@ namespace TrackingCamera.BaseCameraClasses
 
 		#region Move Continuous Commands
 
-
 		/// <summary>
 		/// Sets the Zoom value before Execute Zoom command is called.
 		/// </summary>
 		/// <param name="zoomAmt"></param>
-		public virtual void SetZoomContinuous(int zoomAmt)
+		public override void SetZoomContinuous(int zoomAmt)
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
@@ -473,7 +215,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Executes the Zoom command.
 		/// Call SetZoomContinuous first before calling this method.
 		/// </summary>
-		public virtual void ExecuteZoomContinuous()
+		public override void ExecuteZoomContinuous()
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
@@ -482,7 +224,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Sets the Tilt value before Execute PanTilt command is called.
 		/// </summary>
 		/// <param name="tiltAmt"></param>
-		public virtual void SetTiltContinuous(int tiltAmt)
+		public override void SetTiltContinuous(int tiltAmt)
 		{
 			if (tiltAmt != 0 && Math.Abs(tiltAmt) > this.PtzTrackingThreshold)
 			{
@@ -503,7 +245,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Sets the Pan value before Execute PanTilt command is called.
 		/// </summary>
 		/// <param name="tiltAmt"></param>
-		public virtual void SetPanContinuous(int panAmt)
+		public override void SetPanContinuous(int panAmt)
 		{
 			if (panAmt != 0 && Math.Abs(panAmt) > this.PtzTrackingThreshold)
 			{
@@ -525,7 +267,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Call SetTiltContinuous first before calling this method.
 		/// Call SetPanContinuous first before calling this method.
 		/// </summary>
-		public virtual void ExecutePanTiltContinuous()
+		public override void ExecutePanTiltContinuous()
 		{
 			this.PtzController.ContinuousMoveAsync(this.MediaProfile.Name, new PTZSpeed
 			{
@@ -564,7 +306,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Sets the relative Tilt Amount.
 		/// </summary>
 		/// <param name="tiltAmt"></param>
-		public virtual void SetTiltRelative(int tiltAmt)
+		public override void SetTiltRelative(int tiltAmt)
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
@@ -573,7 +315,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Sets the relative Pan Amount.
 		/// </summary>
 		/// <param name="panAmt"></param>
-		public virtual void SetPanRelative(int panAmt)
+		public override void SetPanRelative(int panAmt)
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
@@ -581,7 +323,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// <summary>
 		/// Executes the Relative PanTilt command.
 		/// </summary>
-		public virtual void ExecutePanTiltRelative()
+		public override void ExecutePanTiltRelative()
 		{
 			this.StopPtz();
 			throw new NotImplementedException("Not Implemented.");
@@ -591,7 +333,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// Sets the relative Zoom Amount.
 		/// </summary>
 		/// <param name="zoomAmt"></param>
-		public virtual void SetZoomRelative(int zoomAmt)
+		public override void SetZoomRelative(int zoomAmt)
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
@@ -599,7 +341,7 @@ namespace TrackingCamera.BaseCameraClasses
 		/// <summary>
 		/// Executes the relative Zoom Command.
 		/// </summary>
-		public virtual void ExecuteZoomRelative()
+		public override void ExecuteZoomRelative()
 		{
 			throw new NotImplementedException("Not Implemented.");
 		}
@@ -609,31 +351,12 @@ namespace TrackingCamera.BaseCameraClasses
 		/// <summary>
 		/// Stops all Pan/tilt/zoom commands.
 		/// </summary>
-		public virtual void StopPtz()
+		public override void StopPtz()
 		{
 			// Stop continuous move
 			this.PtzController.StopAsync(this.MediaProfile.Name, true, true);
 		}
 
-		/// <summary>
-		/// Is the current target (face) approximately centered in the video frame?
-		/// </summary>
-		/// <returns><c>True</c> if the target is centered, <c>False</c> otherwise.</returns>
-		public bool IsTargetCentered()
-		{
-			if ((this.PtzPanAmt == 0) & (this.PtzTiltAmt == 0))
-			{
-				return true;
-			}
-			else if ((Math.Abs(this.PtzPanAmt) < this.PtzTrackingThreshold) & (Math.Abs(this.PtzTiltAmt) < this.PtzTrackingThreshold))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
 		#endregion
 
 		#region  Protected Abstract Methods

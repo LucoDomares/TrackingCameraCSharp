@@ -20,6 +20,7 @@ namespace TrackingCamera.CameraManagers
 			// todo: implement the rest of the camera classes.
 			//factory.register_builder("easyN_A110", easyN_A110CameraBuilder());
 			//factory.register_builder("HIKVISION_camera", HIKVISION_cameraCameraBuilder());
+			//...
 		}
 
 
@@ -35,9 +36,7 @@ namespace TrackingCamera.CameraManagers
 			/// </summary>
 			public CameraManagerFactory()
 			{
-				this.Builders = new Dictionary<string, CameraManagerBuilder>
-				{
-				};
+				this.Builders = new Dictionary<string, CameraManagerBuilder>();
 			}
 
 			/// <summary>

@@ -7,18 +7,24 @@ using System.Collections.Generic;
 using Mictlanix.DotNet.Onvif;
 using Mictlanix.DotNet.Onvif.Common;
 using Mictlanix.DotNet.Onvif.Ptz;
+
+using OpenCvSharp;
+using OpenCvSharp.Dnn;
 using TrackingCamera.CameraClasses;
 using TrackingCamera.Helpers;
 using TrackingCamera.CameraManagers;
 using System.IO;
+using System.Diagnostics;
 
 namespace TrackingCamera {
 	class Program {
+		private static readonly string[] Labels = { "background", "aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor" };
+
 		static void Main (string[] args)
 		{
 			MainAsync().Wait();
 		}
-
+	
 		/// <summary>
 		/// Main asycronous method 
 		/// </summary>

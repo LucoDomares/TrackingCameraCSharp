@@ -7,12 +7,10 @@ namespace TrackingCamera.Helpers
 {
 	static class VideoTools
 	{
-		public static IplImage ResizeIplTo(IplImage sourceImage, int width, int height)
+		public static Mat ResizeIplTo(Mat sourceImage, int width, int height)
 		{
-			IplImage newImage = new IplImage(new OpenCvSharp.CvSize(width, height),
-											 sourceImage.Depth, sourceImage.NChannels);
-
-			sourceImage.Resize(newImage, Interpolation.Linear);
+			Mat newImage = new Mat();
+			Cv2.Resize(sourceImage, newImage, new Size(width, height), 0, 0, InterpolationFlags.Linear);
 
 			return newImage;
 		}
